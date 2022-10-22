@@ -4,7 +4,7 @@ data class Player(
     val dni: String = uniqueID(),
     val name: String,
     val surnames: String,
-    val dateOfBirth: LocalDate
+    val dateOfBirth: LocalDate,
 )
 
 data class OrganizingEntity(
@@ -26,7 +26,7 @@ data class SportingEvent(
     val startDate: LocalDate,
     val finishDate: LocalDate,
     val ratings: MutableList<Rating> = mutableListOf(),
-    var playerRating: Double = 0.0
+    var playerRating: Double = 0.0,
 )
 
 data class SportingEventForm(
@@ -45,7 +45,7 @@ enum class Resource {
 data class Rating(
     val player: Player,
     val rate: Int,
-    val comment: String?
+    val comment: String?,
 )
 
 class SportEvents4Club() {
@@ -64,7 +64,11 @@ class SportEvents4Club() {
         return organizingEntities[organizingEntity.id]!!
     }
 
-    fun addSportingEventForm(id: String, entity: OrganizingEntity, event: SportingEvent): SportingEventForm {
+    fun addSportingEventForm(
+        id: String,
+        entity: OrganizingEntity,
+        event: SportingEvent
+    ): SportingEventForm {
         if (entity.id !in organizingEntities) {
             throw Error("Entity ${entity.name} does not exist")
         }
@@ -82,7 +86,7 @@ class SportEvents4Club() {
         sportingEventForm: SportingEventForm,
         isAccepted: Boolean = true,
         rejectionReason: String = ""
-    ): SportingEvent {
+    ): SportingEvent? {
         sportingEventForms[sportingEventForm.id]?.let {
             it.accepted = isAccepted
             it.revisionDate = LocalDate.now()
@@ -91,9 +95,12 @@ class SportEvents4Club() {
             }
         } ?: throw Error("Eventform ${sportingEventForm.id} does not exist")
 
-        sportingEvents[sportingEventForm.sportingEvent.id] = sportingEventForm.sportingEvent
-
-        return sportingEvents[sportingEventForm.sportingEvent.id]!!
+        return if (isAccepted) {
+            sportingEvents[sportingEventForm.sportingEvent.id] = sportingEventForm.sportingEvent
+            sportingEvents[sportingEventForm.sportingEvent.id]
+        } else {
+            null
+        }
     }
 
     fun addPlayerToSportingEvent(sportingEvent: SportingEvent, player: Player) {
@@ -140,12 +147,25 @@ class SportEvents4Club() {
         return result
     }
 
-    fun createRating(player: Player, sportingEvent: SportingEvent, rate: Int, comment: String? = ""): Boolean {
-        if (player.dni !in players) throw Error("Player with id ${player.dni} does not exist")
-        if (sportingEvent.id !in sportingEvents) throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
+    fun createRating(
+        player: Player,
+        sportingEvent: SportingEvent,
+        rate: Int,
+        comment: String? = ""
+    ): Boolean {
+        if (player.dni !in players) {
+            throw Error("Player with id ${player.dni} does not exist")
+        }
+        if (sportingEvent.id !in sportingEvents) {
+            throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
+        }
         sportingEvents[sportingEvent.id]?.let {
-            if (it.players?.contains(player) == true) throw Error("Player did not play in that event")
-            if (it.ratings.filter { it.player == player }.isNotEmpty()) throw Error("Players can vote only once")
+            if (it.players?.contains(player) == true) {
+                throw Error("Player did not play in that event")
+            }
+            if (it.ratings.filter { rating -> rating.player == player }.isNotEmpty()) {
+                throw Error("Players can vote only once")
+            }
             it.ratings.add(Rating(player = player, rate = rate, comment = comment))
             var total = 0
             for (currentRate in it.ratings) {
@@ -157,13 +177,15 @@ class SportEvents4Club() {
     }
 
     fun getRatingByEvent(sportingEvent: SportingEvent): List<Rating> {
-        if (sportingEvent.id !in sportingEvents) throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
+        if (sportingEvent.id !in sportingEvents) {
+            throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
+        }
         sportingEvents[sportingEvent.id]?.ratings?.let {
             return it
         } ?: throw Error("There are no ratings by this event")
     }
 
-    fun getMostActivePlayer() {
+    fun getMostActivePlayer(): Player? {
         var gamesPlayed = mutableMapOf<Player, Int>()
         for (player in players) {
             for (event in sportingEvents) {
@@ -176,10 +198,8 @@ class SportEvents4Club() {
                 }
             }
         }
-
-//        val result = capitals.toList().sortedBy { (_, value) -> value}.toMap()
         val result = gamesPlayed.toList().sortedByDescending { (_, value) -> value }.toMap()
-        print(result)
+        return players[result.keys.toList().get(0) as String]
     }
 
     fun getMostValuableEvent(): SportingEvent {
