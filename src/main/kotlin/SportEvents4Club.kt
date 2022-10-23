@@ -199,8 +199,9 @@ class SportEvents4Club() {
                 }
             }
         }
-        val result = gamesPlayed.toList().sortedByDescending { (_, value) -> value }.toMap()
-        return players[result.keys.toList().get(0) as String]
+//        val result = gamesPlayed.toList().sortedByDescending { (_, value) -> value }.toMap()
+        val result = gamesPlayed.toList().sortedByDescending { (_, value) -> value }
+        return result[0].first
     }
 
     fun getMostValuableEvent(): SportingEvent {

@@ -557,6 +557,7 @@ class SportEvents4ClubTest {
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
+        sportEvents4Club.addPlayerToClub(player2)
 
         val organizingEntity = OrganizingEntity(id = "abc", name = "cruz roja")
         val sportingEvent = SportingEvent(
@@ -583,6 +584,12 @@ class SportEvents4ClubTest {
 
         sportEvents4Club.addPlayerToSportingEvent(newSportingEvent!!, player)
 
+        try {
+            val resultRatingsUnknownEvent = sportEvents4Club.getRatingByEvent(sportingEvent)
+        } catch (e: Error) {
+            e.message?.lowercase()?.contains("does not exist")?.let { assert(it) }
+        }
+
         val result = sportEvents4Club.createRating(
             player = player,
             sportingEvent = newSportingEvent,
@@ -591,5 +598,81 @@ class SportEvents4ClubTest {
         )
 
         assert(result)
+
+        try {
+            val resultSamePlayerCommentAgain = sportEvents4Club.createRating(
+                player = player,
+                sportingEvent = newSportingEvent,
+                rate = 8,
+                comment = "mola mazo"
+            )
+        } catch (e: Error) {
+            e.message?.lowercase()?.contains("can vote only once")?.let { assert(it) }
+        }
+
+        try {
+            val resultPlayerNotSignedInEvent = sportEvents4Club.createRating(
+                player = player2,
+                sportingEvent = newSportingEvent,
+                rate = 8
+            )
+        } catch (e: Error) {
+            e.message?.lowercase()?.contains("did not play in that event")?.let { assert(it) }
+        }
+
+        val sportingEvent2 = SportingEvent(
+            id = "spoNO",
+            "evento NO",
+            sportingEventSize = SportingEventSize.SMALL_SCALE,
+            maxParticipant = 8,
+            startDate = LocalDate.now().plusDays(10),
+            finishDate = LocalDate.now().plusDays(11)
+        )
+
+        try {
+            val result2 = sportEvents4Club.createRating(
+                player = player,
+                sportingEvent = sportingEvent2,
+                rate = 8,
+                comment = "envento no existe"
+            )
+        } catch (e: Error) {
+            e.message?.contains("does not exist")?.let { assert(it) }
+            e.message?.lowercase()?.contains("sportingevent")?.let { assert(it) }
+        }
+
+        try {
+            val resultNoExistentPlayer = sportEvents4Club.createRating(
+                player = Player(
+                    name = "no exist",
+                    surnames = "no",
+                    dateOfBirth = LocalDate.now().plusDays(10)
+                ),
+                sportingEvent = newSportingEvent,
+                rate = 8,
+                comment = "mola mazo"
+            )
+        } catch (e: Error) {
+            e.message?.lowercase()?.contains("player")?.let { assert(it) }
+            e.message?.lowercase()?.contains("does not exist")?.let { assert(it) }
+        }
+
+        val resultRatings = sportEvents4Club.getRatingByEvent(sportingEvent)
+
+        assert(resultRatings.size == 1)
+
+        try {
+            val resultRatingsUnknownEvent = sportEvents4Club.getRatingByEvent(sportingEvent2)
+        } catch (e: Error) {
+            e.message?.lowercase()?.contains("does not exist")?.let { assert(it) }
+        }
+
+        val mostValuablePlayer = sportEvents4Club.getMostActivePlayer()
+
+        assert(mostValuablePlayer == player)
+
+        val mostValuableEvent = sportEvents4Club.getMostValuableEvent()
+
+        assert(mostValuableEvent == sportingEvent)
     }
 }
