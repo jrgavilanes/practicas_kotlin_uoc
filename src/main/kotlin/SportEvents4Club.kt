@@ -114,14 +114,15 @@ class SportEvents4Club() {
         } ?: throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
     }
 
-    fun getRejectedFormsPercentage(): Double {
+    fun getRejectedFormsPercentage(): Int {
         var totalRejected = 0
         for (form in sportingEventForms) {
             if (form.value.accepted == false) {
                 totalRejected++
             }
         }
-        return (totalRejected * 100.0) / sportingEventForms.size
+        if (sportingEventForms.size == 0) return 0
+        return ((totalRejected * 100.0) / sportingEventForms.size).toInt()
     }
 
     fun getEventsByOrgEntity(organizingEntity: OrganizingEntity): List<SportingEvent> {
@@ -153,14 +154,14 @@ class SportEvents4Club() {
         rate: Int,
         comment: String? = ""
     ): Boolean {
-        if (player.dni !in players) {
+        if (player.dni !in players.keys) {
             throw Error("Player with id ${player.dni} does not exist")
         }
-        if (sportingEvent.id !in sportingEvents) {
+        if (sportingEvent.id !in sportingEvents.keys) {
             throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
         }
         sportingEvents[sportingEvent.id]?.let {
-            if (it.players?.contains(player) == true) {
+            if (it.players?.filter { it.dni == player.dni }?.isEmpty() == true) {
                 throw Error("Player did not play in that event")
             }
             if (it.ratings.filter { rating -> rating.player == player }.isNotEmpty()) {
