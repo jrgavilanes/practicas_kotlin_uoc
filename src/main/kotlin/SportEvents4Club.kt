@@ -3,7 +3,7 @@ import java.time.LocalDate
 data class Player(
     val dni: String = uniqueID(),
     val name: String,
-    val surnames: String,
+    val surname: String,
     val dateOfBirth: LocalDate,
 )
 
@@ -132,7 +132,7 @@ class SportEvents4Club() {
         }.map { it.value.sportingEvent } ?: throw Error("There are no events by that organizing entity")
     }
 
-    fun getAllSportingEvents(): List<SportingEvent> {
+    fun getAllSportingEvents(): Collection<SportingEvent> {
         val result = sportingEvents.map { it.value }
         if (result.isEmpty()) {
             throw Error("There are no events")
@@ -154,10 +154,10 @@ class SportEvents4Club() {
         rate: Int,
         comment: String? = ""
     ): Boolean {
-        if (player.dni !in players.keys) {
+        if (player.dni !in players) {
             throw Error("Player with id ${player.dni} does not exist")
         }
-        if (sportingEvent.id !in sportingEvents.keys) {
+        if (sportingEvent.id !in sportingEvents) {
             throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
         }
         sportingEvents[sportingEvent.id]?.let {
@@ -177,7 +177,7 @@ class SportEvents4Club() {
         return true
     }
 
-    fun getRatingByEvent(sportingEvent: SportingEvent): List<Rating> {
+    fun getRatingByEvent(sportingEvent: SportingEvent): Collection<Rating> {
         if (sportingEvent.id !in sportingEvents) {
             throw Error("SportingEvent with id ${sportingEvent.id} does not exist")
         }
@@ -215,9 +215,12 @@ fun main() {
         Player(
             dni = uniqueID(),
             name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            surname = "Gavilanes Sánchez",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
     )
     println(sportEvents4Club.players)
+    sportEvents4Club.sportingEvents["event_key"]
 }
+
+

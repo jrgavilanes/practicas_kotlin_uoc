@@ -17,9 +17,9 @@ class SportEvents4ClubTest {
     fun `add Player To Club`() {
         val sportEvents4Club = SportEvents4Club()
         val player = Player(
-            dni = "48384911H",
-            name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            dni = "11111111H",
+            name = "jugador 1",
+            surname = "apellido",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
@@ -136,9 +136,9 @@ class SportEvents4ClubTest {
     fun `addPlayerToSportingEvent`() {
         val sportEvents4Club = SportEvents4Club()
         val player = Player(
-            dni = "48384911H",
-            name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            dni = "11111111H",
+            name = "jugador 1",
+            surname = "apellido",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
@@ -169,9 +169,9 @@ class SportEvents4ClubTest {
     fun `add unknown PlayerToSportingEvent`() {
         val sportEvents4Club = SportEvents4Club()
         val player = Player(
-            dni = "48384911H",
-            name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            dni = "11111111H",
+            name = "jugador 1",
+            surname = "apellido",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
@@ -198,9 +198,9 @@ class SportEvents4ClubTest {
             sportEvents4Club.addPlayerToSportingEvent(
                 newSportingEvent!!,
                 Player(
-                    dni = "48384911Hx",
-                    name = "Juan Ramónx",
-                    surnames = "Gavilanes Sánchezx",
+                    dni = "11111111Hx",
+                    name = "jugador 1x",
+                    surname = "apellidox",
                     dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
                 )
             )
@@ -213,9 +213,9 @@ class SportEvents4ClubTest {
     fun `add extra PlayerToSportingEvent`() {
         val sportEvents4Club = SportEvents4Club()
         val player = Player(
-            dni = "48384911H",
-            name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            dni = "11111111H",
+            name = "jugador 1",
+            surname = "apellido",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
@@ -252,9 +252,9 @@ class SportEvents4ClubTest {
     fun `add player to unknown SportingEvent`() {
         val sportEvents4Club = SportEvents4Club()
         val player = Player(
-            dni = "48384911H",
-            name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            dni = "11111111H",
+            name = "jugador 1",
+            surname = "apellido",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
@@ -470,19 +470,19 @@ class SportEvents4ClubTest {
 
         val sportEvents4Club = SportEvents4Club()
         val player = Player(
-            dni = "48384911H",
-            name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            dni = "11111111H",
+            name = "jugador 1",
+            surname = "apellido",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         val player2 = Player(
             name = "name2",
-            surnames = "surname2",
+            surname = "surname2",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         val player3 = Player(
             name = "name3",
-            surnames = "surname3",
+            surname = "surname3",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
@@ -546,14 +546,14 @@ class SportEvents4ClubTest {
 
         val sportEvents4Club = SportEvents4Club()
         val player = Player(
-            dni = "48384911H",
-            name = "Juan Ramón",
-            surnames = "Gavilanes Sánchez",
+            dni = "4838",
+            name = "jugador 1",
+            surname = "Gavilanes",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         val player2 = Player(
             name = "xxx",
-            surnames = "xxxx",
+            surname = "xxxx",
             dateOfBirth = LocalDate.parse("08-06-1978", DATE_FORMATTER)
         )
         sportEvents4Club.addPlayerToClub(player)
@@ -594,7 +594,7 @@ class SportEvents4ClubTest {
             player = player,
             sportingEvent = newSportingEvent,
             rate = 8,
-            comment = "mola mazo"
+            comment = "me gusta"
         )
 
         assert(result)
@@ -604,7 +604,7 @@ class SportEvents4ClubTest {
                 player = player,
                 sportingEvent = newSportingEvent,
                 rate = 8,
-                comment = "mola mazo"
+                comment = "me gusta"
             )
         } catch (e: Error) {
             e.message?.lowercase()?.contains("can vote only once")?.let { assert(it) }
@@ -645,12 +645,12 @@ class SportEvents4ClubTest {
             val resultNoExistentPlayer = sportEvents4Club.createRating(
                 player = Player(
                     name = "no exist",
-                    surnames = "no",
+                    surname = "no",
                     dateOfBirth = LocalDate.now().plusDays(10)
                 ),
                 sportingEvent = newSportingEvent,
                 rate = 8,
-                comment = "mola mazo"
+                comment = "me gusta"
             )
         } catch (e: Error) {
             e.message?.lowercase()?.contains("player")?.let { assert(it) }
